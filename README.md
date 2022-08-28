@@ -2,10 +2,14 @@
 “Ask Me!” is a place where anyone can ask questions and others can contribute to it with quality answers.
 People can share their thoughts and ideas and engage with others.
 
-## Objective:
-- Enabling the path of knowledge sharing
-- Helping people to get solutions to their questions
-- Starting the process of acquiring new understanding, knowledge and skills
+## Features:
+- There are registered users, guest users and admins
+- Users can post questions and answer others’ questions
+- Users can upvote or downvote answers
+- Users can report any harmful questions or answers
+- Users can search previously asked questions with titles or tags
+- Guests can only view and search questions and answers
+- Admins can monitor user reports and take actions if necessary
 
 ### Programming Language: C#, HTML, CSS, Javascript
 ### Database: MS SQL Server
