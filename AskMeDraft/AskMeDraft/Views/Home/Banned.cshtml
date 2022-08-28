@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewBag.Title = "Banned";
+    ViewBag.SessionUser = Session["User"];
+}
+
+<h2 style="color: red; margin-top: 20px; margin-bottom: 20px;">Banned</h2>
+
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-user-tab" data-bs-toggle="pill" data-bs-target="#pills-user" type="button" role="tab" aria-controls="pills-user" aria-selected="false">Users</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-question-tab" data-bs-toggle="pill" data-bs-target="#pills-question" type="button" role="tab" aria-controls="pills-question" aria-selected="true">Questions</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-answer-tab" data-bs-toggle="pill" data-bs-target="#pills-answer" type="button" role="tab" aria-controls="pills-answer" aria-selected="false">Answers</button>
+    </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-user" role="tabpanel" aria-labelledby="pills-user-tab">
+        <table class="table table-light table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Profile</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in ViewBag.BannedUsers)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td style="font-style: italic;">@user.Username</td>
+                        <td>@user.Email</td>
+                        <td><a class="link-secondary" href="/Home/UserProfile?ID=@user.ID">View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="pills-question" role="tabpanel" aria-labelledby="pills-question-tab">
+        @{ Html.RenderPartial("QuestionCard"); }
+    </div>
+    <div class="tab-pane fade" id="pills-answer" role="tabpanel" aria-labelledby="pills-answer-tab">
+        @{ Html.RenderPartial("AnswerCard"); }
+    </div>
+</div>
+
+<script>
+    function banAnswer(id) {
+        if (confirm("Ban Answer?"))
+            window.location.href = '/Answer/ChangeAnswerStatus?ID=' + id;
+    }
+
+    function unbanAnswer(id) {
+        if (confirm("Unban Answer?"))
+            window.location.href = '/Answer/ChangeAnswerStatus?ID=' + id;
+    }
+</script>
+

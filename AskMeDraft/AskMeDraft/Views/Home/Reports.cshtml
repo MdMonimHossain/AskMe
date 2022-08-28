@@ -1,0 +1,125 @@
+﻿
+@{
+    ViewBag.Title = "Reports";
+    ViewBag.SessionUser = Session["User"];
+}
+
+<h2 style="color: red; margin-top: 20px; margin-bottom: 20px;">Reports</h2>
+
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-question-tab" data-bs-toggle="pill" data-bs-target="#pills-question" type="button" role="tab" aria-controls="pills-question" aria-selected="true">Question</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-answer-tab" data-bs-toggle="pill" data-bs-target="#pills-answer" type="button" role="tab" aria-controls="pills-answer" aria-selected="false">Answer</button>
+    </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-question" role="tabpanel" aria-labelledby="pills-question-tab">
+        <table class="table table-light table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Reporter</th>
+                    <th scope="col">Report Time</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Report Handler</th>
+                    <th scope="col">Question</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in ViewBag.QuestionReportViews)
+                {
+                    <tr>
+                        <td><a class="link-dark" style="text-decoration: none;" href="/Home/UserProfile?ID=@report.ReporterID">@report.ReporterName</a></td>
+                        <td>@report.ReportDatetime</td>
+                        <td>@report.Reason</td>
+                        @if (report.ReportHandlerID == null) { ViewBag.QuestionReportHandler = ""; } else { ViewBag.QuestionReportHandler = "/Home/UserProfile?ID=" + report.ReportHandlerID; }
+                        <td><a id="@("qrh" + report.ID)" class="link-dark" style="text-decoration: none;" href="@ViewBag.QuestionReportHandler">@report.ReportHandlerName</a></td>
+                        <td><a class="link-secondary" href="/Question/ViewQuestion?ID=@report.QuestionID">View</a></td>
+                        @if (report.Status) { ViewBag.QuestionReportStatus = "Pending"; ViewBag.QuestionReportStatusColor = "color: #FC7F03;"; } else { ViewBag.QuestionReportStatus = "Resolved"; ViewBag.QuestionReportStatusColor = "color: #3DD8EF;"; }
+                        <td><a id="@("qrs" + report.ID)" style="text-decoration: none; cursor: pointer; @ViewBag.QuestionReportStatusColor" onclick="changeReportStatus(@report.ID, 'Question')">@ViewBag.QuestionReportStatus</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="pills-answer" role="tabpanel" aria-labelledby="pills-answer-tab">
+        <table class="table table-light table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Reporter</th>
+                    <th scope="col">Report Time</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Report Handler</th>
+                    <th scope="col">Answer</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in ViewBag.AnswerReportViews)
+                {
+                    <tr>
+                        <td><a class="link-dark" style="text-decoration: none;" href="/Home/UserProfile?ID=@report.ReporterID">@report.ReporterName</a></td>
+                        <td>@report.ReportDatetime</td>
+                        <td>@report.Reason</td>
+                        @if (report.ReportHandlerID == null) { ViewBag.AnswerReportHandler = ""; } else { ViewBag.AnswerReportHandler = "/Home/UserProfile?ID=" + report.ReportHandlerID; }
+                        <td><a id="@("arh" + report.ID)" class="link-dark" style="text-decoration: none;" href="@ViewBag.AnswerReportHandler">@report.ReportHandlerName</a></td>
+                        <td><a class="link-secondary" href="/Answer/ReportedAnswer?ID=@report.AnswerID">View</a></td>
+                        @if (report.Status) { ViewBag.AnswerReportStatus = "Pending"; ViewBag.AnswerReportStatusColor = "color: #FC7F03;"; } else { ViewBag.AnswerReportStatus = "Resolved"; ViewBag.AnswerReportStatusColor = "color: #3DD8EF;"; }
+                        <td><a id="@("ars" + report.ID)" style="text-decoration: none; cursor: pointer; @ViewBag.AnswerReportStatusColor" onclick="changeReportStatus(@report.ID, 'Answer')">@ViewBag.AnswerReportStatus</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function changeReportStatus(id, type) {
+        
+        if (type == 'Question') {
+            idForStatus = 'qrs' + id;
+            idForHandler = 'qrh' + id;
+        }
+        else {
+            idForStatus = 'ars' + id;
+            idForHandler = 'arh' + id;
+        }
+        
+        event.preventDefault()
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("post", '/' + type + '/ChangeReportStatus', true);
+        xhr.setRequestHeader("content-type", "application/json")
+        xhr.onreadystatechange = function (ev) {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    const obj = JSON.parse(this.responseText);
+                    
+                    document.getElementById(idForStatus).innerText = obj["ReportStatus"];
+                    document.getElementById(idForHandler).innerText = obj["ReportHandlerName"];
+                    
+                    if (obj["ReportStatus"] == 'Pending') {
+                        document.getElementById(idForStatus).style.color = "#FC7F03";
+                        document.getElementById(idForHandler).href = "";
+                    }
+                    else {
+                        document.getElementById(idForStatus).style.color = "#3DD8EF";
+                        document.getElementById(idForHandler).href = '/Home/UserProfile?ID=' + obj["ReportHandlerID"];
+                    }
+                }
+                else {
+                    console.log(`Error(${this.status}): ${this.statusText}`)
+                }
+            }
+        }
+
+        if (type == 'Question')
+            var req_obj = { QuestionReportID: id };
+        else
+            var req_obj = { AnswerReportID: id };
+
+        xhr.send(JSON.stringify(req_obj));     
+    }
+</script>

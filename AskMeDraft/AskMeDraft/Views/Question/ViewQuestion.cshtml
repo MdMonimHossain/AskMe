@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "View Question";
+    ViewBag.SessionUser = Session["User"];
+
+    if(ViewBag.SessionUser.ID == -1)
+    {
+        Layout = "~/Views/Shared/_LayoutGuest.cshtml";
+        ViewBag.hidePostAnswer = "Display: none";
+    }
+    else if(ViewBag.SessionUser.Status == false)
+    {
+        ViewBag.hidePostAnswer = "Display: none";
+    }
+}
+
+<h2>Question</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h4 class="card-title" style="font-size: 18px"><a class="link-dark" style="text-decoration: none;" href="/Home/UserProfile?ID=@ViewBag.User.ID">@ViewBag.User.Name</a></h4>
+            </div>
+            <div class="col-6">
+                @if (ViewBag.SessionUser.ID == ViewBag.Question.CreatorID) { ViewBag.hideReportSystem = "Display: none;"; }
+                <div class="p text-end p-1" style="@ViewBag.hideReportSystem">
+                    @if (ViewBag.SessionUser.Role != "user") { ViewBag.hideReport = "Display: none;"; }
+                    <a href="/Question/ReportQuestion?ID=@ViewBag.Question.ID" class="link-danger fw-bold" style="text-decoration: none; @ViewBag.hideReport">Report</a>
+                    @if (ViewBag.SessionUser.Role != "admin") { ViewBag.hideBan = "Display: none;"; ViewBag.hideUnban = "Display: none;"; }
+                    @if (ViewBag.Question.Status == false) { ViewBag.hideBan = "Display: none;"; } else { ViewBag.hideUnban = "Display: none;"; }
+                    <a class="link-danger fw-bold" style="cursor: pointer; text-decoration: none; @ViewBag.hideBan" onclick="banQuestion(@ViewBag.Question.ID)">Ban</a>
+                    <a class="link-danger fw-bold" style="cursor: pointer; text-decoration: none; @ViewBag.hideUnban" onclick="unbanQuestion(@ViewBag.Question.ID)">Unban</a>
+                </div>
+            </div>
+            <h6 class="card-subtitle mb-2 text-muted" style="font-size: 12px">@ViewBag.Datetime</h6>
+            <h6 class="card-subtitle mb-2 text-muted" style="font-size: 12px">@ViewBag.Question.ViewCount Views</h6>
+            @if(ViewBag.Question.Status == true) { ViewBag.hideBanned = "Display: none;"; }
+            <h6 class="card-subtitle mb-2 text-danger" style="font-size: 12px; @ViewBag.hideBanned">Banned</h6>
+            <p class="card-text fw-bold" style="font-size: 20px">@ViewBag.Question.Title</p>
+            <p class="card-text" style="font-size: 16px; white-space: pre-wrap;">@ViewBag.Question.Description</p>
+            <p>
+                @foreach (var tag in ViewBag.Tags)
+                {
+                    <span style="color: darkblue; font-style: italic; font-size: 15px;">#@tag.Keyword &nbsp;</span>
+                }
+            </p>
+        </div>
+    </div>
+</div>
+
+<h2>Answers</h2>
+
+@if(ViewBag.Question.Status == false) { ViewBag.hidePostAnswer = "Display: none"; }
+<div style="@ViewBag.hidePostAnswer">
+    <form class="form-inline my-3" action="/Answer/PostAnswer" method="post">
+        <div class="row mx-sm-3 mb-2">
+            <input type="hidden" id="QuestionID" name="QuestionID" value="@ViewBag.Question.ID">
+            <div class="col-10">
+                <textarea class="form-control" id="InputAnswer" rows="2" placeholder="Type your answer" name="Content"></textarea>
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-dark mb-2">Submit Answer</button>
+            </div>
+            <div class="text-danger">
+                @Html.ValidationSummary()
+            </div>
+        </div>
+    </form>
+</div>
+
+@{ Html.RenderPartial("AnswerCard"); }
+
+<script>
+    function deleteAlert(id) {
+        if (confirm("Delete Answer?"))
+            window.location.href = '/Answer/DeleteAnswer?ID=' + id;
+    }
+
+    function banQuestion(id) {
+        if (confirm("Ban Question?"))
+            window.location.href = '/Question/ChangeQuestionStatus?ID=' + id;
+    }
+
+    function unbanQuestion(id) {
+        if (confirm("Unban Question?"))
+            window.location.href = '/Question/ChangeQuestionStatus?ID=' + id;
+    }
+
+    function banAnswer(id) {
+        if (confirm("Ban Answer?"))
+            window.location.href = '/Answer/ChangeAnswerStatus?ID=' + id;
+    }
+
+    function unbanAnswer(id) {
+        if (confirm("Unban Answer?"))
+            window.location.href = '/Answer/ChangeAnswerStatus?ID=' + id;
+    }
+
+    function castVote(id, voteType, role) {
+        if (role != "guest") {
+            event.preventDefault()
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("post", "/Answer/Vote", true);
+            xhr.setRequestHeader("content-type", "application/json")
+            xhr.onreadystatechange = function (ev) {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        const obj = JSON.parse(this.responseText);
+                        document.getElementById("upvoteText" + id).innerText = 'Upvote(' + obj["UpvoteCount"] + ')';
+                        document.getElementById("downvoteText" + id).innerText = 'Downvote(' + obj["DownvoteCount"] + ')';
+                    }
+                    else {
+                        console.log(`Error(${this.status}): ${this.statusText}`)
+                    }
+                }
+            }
+
+            var req_obj = { AnswerID: id, VoteType: voteType };
+
+            xhr.send(JSON.stringify(req_obj));
+        }
+    }
+
+</script>

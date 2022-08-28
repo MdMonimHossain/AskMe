@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "My Questions";
+    ViewBag.SessionUser = Session["User"];
+
+    if(ViewBag.SessionUser.Status == false) { ViewBag.hidePostQuestion = "Display: none;"; }
+}
+
+<a href="/Question/PostQuestion" class="btn btn-dark btn-lg" style="margin-top: 50px; margin-bottom: 30px; @ViewBag.hidePostQuestion">Post Question</a>
+
+<h2>My Questions</h2>
+<br>
+
+@{ Html.RenderPartial("QuestionCard"); }
+
+<script>
+    function deleteAlert(id) {
+        if (confirm("Delete Question?"))
+            window.location.href = '/Question/DeleteQuestion?ID=' + id;
+    }
+</script>

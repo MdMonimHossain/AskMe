@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "Edit Question";
+}
+
+<br>
+<h2>Edit Question</h2>
+
+<form action="/Question/EditQuestion" method="post">
+    <input type="hidden" id="QuestionID" name="ID" value="@ViewBag.QuestionID">
+    <div class="form-group my-2">
+        <label for="InputTitle">Title</label>
+        <input type="text" class="form-control" id="InputTitle" placeholder="Title" value="@ViewBag.QuestionTitle" name="Title">
+    </div>
+    <div class="form-group my-2">
+        <label for="InputDescription">Description</label>
+        <textarea class="form-control" id="InputDescription" rows="5" placeholder="Description" name="Description">@ViewBag.Description</textarea>
+    </div>
+    <div class="form-group my-2">
+        <label for="InputTags">Tags (Optional)</label>
+        <input type="text" class="form-control" id="InputTags" placeholder="Tags" aria-describedby="tagsHelp" value="@ViewBag.Tags" name="Tags">
+        <small id="tagsHelp" class="form-text text-muted">
+            Enter space separated tags.
+        </small>
+    </div>
+    <div class="text-danger">
+        @Html.ValidationSummary()
+    </div>
+    <button type="submit" class="btn btn-secondary my-2">Save Changes</button>
+</form>
+

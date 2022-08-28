@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "My Answers";
+    ViewBag.SessionUser = Session["User"];
+}
+
+<h2>My Answers</h2>
+<br>
+
+@{ Html.RenderPartial("AnswerCard"); }
+
+<script>
+    function deleteAlert(id) {
+        if (confirm("Delete Answer?"))
+            window.location.href = '/Answer/DeleteAnswer?ID=' + id;
+    }
+</script>

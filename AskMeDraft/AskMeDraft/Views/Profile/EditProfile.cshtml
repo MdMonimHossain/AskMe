@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewBag.Title = "Edit Profile";
+    ViewBag.SessionUser = Session["User"];
+
+    if (ViewBag.User.Role == "admin") { ViewBag.adminChecked = "checked"; }
+    else { ViewBag.userChecked = "checked"; }
+
+    if (ViewBag.User.Status == true) { ViewBag.activeChecked = "checked"; }
+    else { ViewBag.bannedChecked = "checked"; }
+
+    if(ViewBag.SessionUser.ID != ViewBag.User.ID)
+    {
+        ViewBag.headingText = "Edit User";
+        ViewBag.nameEmailHidden = "display: none";
+    }
+    else
+    {
+        ViewBag.headingText = "Edit Profile";
+        ViewBag.roleStatushidden = "display: none";
+    }
+
+}
+
+<br>
+<h2>@ViewBag.headingText</h2>
+<br>
+<form class="form-row" action="/Profile/EditProfile" method="post">
+    <input type="hidden" id="UserID" name="ID" value="@ViewBag.User.ID">
+    <div class="form-group col-md-4 my-2" style="@ViewBag.nameEmailHidden">
+        <label for="InputName">Name</label>
+        <input type="text" class="form-control" id="InputName" placeholder="Name" name="Name" value="@ViewBag.User.Name">
+    </div>
+    <div class="form-group col-md-4 my-2" style="@ViewBag.nameEmailHidden">
+        <label for="InputEmail">Email</label>
+        <input type="email" class="form-control" id="InputEmail" placeholder="Email" name="Email" value="@ViewBag.User.Email">
+    </div>
+
+    <div class="form-group col-md-4 my-2" style="@ViewBag.roleStatushidden">
+        <label for="userRole">Role</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="Role" id="userRole" value="user" @ViewBag.userChecked>
+            <label class="form-check-label" for="userRole">
+                User
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="Role" id="adminRole" value="admin" @ViewBag.adminChecked>
+            <label class="form-check-label" for="adminRole">
+                Admin
+            </label>
+        </div>
+    </div>
+    <div class="form-group col-md-4 my-2" style="@ViewBag.roleStatushidden">
+        <label for="activeStatus">Status</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="Status" id="activeStatus" value=true @ViewBag.activeChecked>
+            <label class="form-check-label" for="activeStatus">
+                Active
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="Status" id="bannedStatus" value=false @ViewBag.bannedChecked>
+            <label class="form-check-label" for="bannedStatus">
+                Banned
+            </label>
+        </div>
+    </div>
+
+    <div class="text-danger">
+        @Html.ValidationSummary()
+        @ViewBag.Error
+    </div>
+    <button type="submit" class="btn btn-dark my-2">Save Changes</button>
+</form>
+<br>
+<div style="@ViewBag.nameEmailHidden">
+    <p>@Html.ActionLink("Change Password?", "ChangePassword", "Profile", new { @class = "link-secondary" }) </p>    
+</div>

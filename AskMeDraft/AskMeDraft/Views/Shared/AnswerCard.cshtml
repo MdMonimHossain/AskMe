@@ -1,0 +1,47 @@
+﻿@foreach (var answerCard in ViewBag.AnswerCards)
+{
+    <div class="card mx-sm-4 mb-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="card-title" style="font-size: 18px"><a class="link-dark" style="text-decoration: none;" href="/Home/UserProfile?ID=@answerCard.CreatorID">@answerCard.UserName</a></h4>
+                </div>
+                <div class="col-6">
+                    @if (ViewBag.SessionUser.ID != answerCard.CreatorID) { ViewBag.hideEdit = "display: none"; } else { ViewBag.hideEdit = ""; }
+                    <div class="p text-end p-1" style="@ViewBag.hideEdit">
+                        <a href="/Answer/EditAnswer?ID=@answerCard.ID" class="card-link" style="text-decoration: none;">Edit</a>
+                        &nbsp;
+                        <a class="link-danger" style="cursor: pointer; text-decoration: none;" onclick="deleteAlert(@answerCard.ID)">Delete</a>
+                    </div>
+                </div>
+            </div>
+            <h6 class="card-subtitle mb-2 text-muted" style="font-size: 12px">@answerCard.Datetime</h6>
+            @if (answerCard.Status == true) { ViewBag.hideBanned = "Display: none;"; } else { ViewBag.hideBanned = ""; }
+            <h6 class="card-subtitle mb-2 text-danger" style="font-size: 12px; @ViewBag.hideBanned">Banned</h6>
+            <p class="card-text" style="font-size: 20px; white-space: pre-wrap;">@answerCard.Content</p>
+            <div class="row">
+                <div class="col-6">
+                    <a id="@("upvoteText" + answerCard.ID)" class="link-success" style="font-size: 12px; text-decoration: none; cursor: pointer;" onclick="castVote(@answerCard.ID, true, '@ViewBag.SessionUser.Role')">Upvote(@answerCard.UpvoteCount)</a>
+                    &nbsp;
+                    <a id="@("downvoteText" + answerCard.ID)" class="link-danger" style="font-size: 12px; text-decoration: none; cursor: pointer;" onclick="castVote(@answerCard.ID, false, '@ViewBag.SessionUser.Role')">Downvote(@answerCard.DownvoteCount)</a>
+                </div>
+                <div class="col-6">
+                    @if (ViewBag.SessionUser.ID == answerCard.CreatorID) { ViewBag.hideReportSystem = "Display: none;"; } else { ViewBag.hideReportSystem = ""; }
+                    <div class="p text-end p-1" style="@ViewBag.hideReportSystem">
+                        @if (ViewBag.SessionUser.Role != "user") { ViewBag.hideReport = "Display: none;"; } else { ViewBag.hideReport = ""; }
+                        <a href="/Answer/ReportAnswer?ID=@answerCard.ID" class="link-danger fw-bold" style="text-decoration: none; @ViewBag.hideReport">Report</a>
+                        @if (ViewBag.SessionUser.Role != "admin") { ViewBag.hideBan = "Display: none;"; ViewBag.hideUnban = "Display: none;"; }
+                        else if (answerCard.Status == false) { ViewBag.hideBan = "Display: none;"; ViewBag.hideUnban = ""; } else { ViewBag.hideUnban = "Display: none;"; ViewBag.hideBan = ""; }
+                        <a class="link-danger fw-bold" style="cursor: pointer; text-decoration: none; @ViewBag.hideBan" onclick="banAnswer(@answerCard.ID)">Ban</a>
+                        <a class="link-danger fw-bold" style="cursor: pointer; text-decoration: none; @ViewBag.hideUnban" onclick="unbanAnswer(@answerCard.ID)">Unban</a>
+                    </div>
+                </div>
+            </div>
+            <span style="@ViewBag.hideViewQuestion">
+                <br>
+                <a href="/Question/ViewQuestion?ID=@answerCard.QuestionID" class="link-secondary" style="font-size: 15px;">View Question</a>
+            </span>
+        </div>
+    </div>
+    <br>
+}

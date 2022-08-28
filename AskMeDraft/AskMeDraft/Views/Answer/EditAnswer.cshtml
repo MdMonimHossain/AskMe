@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Edit Answer";
+}
+
+<h2>Edit Answer</h2>
+
+<form class="form-inline my-3" action="/Answer/EditAnswer" method="post">
+    <div class="row mx-sm-3 mb-2">
+        <input type="hidden" id="AnswerID" name="ID" value="@ViewBag.AnswerID">
+        <div class="col-10">
+            <textarea class="form-control" id="InputAnswer" rows="2" placeholder="Type your answer" name="Content">@ViewBag.Content</textarea>
+        </div>
+        <div class="col-2">
+            <button type="submit" class="btn btn-dark mb-2">Save Changes</button>
+        </div>
+        <div class="text-danger">
+            @Html.ValidationSummary()
+        </div>
+    </div>
+</form>

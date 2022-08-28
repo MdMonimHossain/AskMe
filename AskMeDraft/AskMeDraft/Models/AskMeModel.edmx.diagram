@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="4e7e6ee6aa5340c298b9301cb2f7c06f" Name="Diagram1">
+        <EntityTypeShape EntityType="AskMeModel.Answer" Width="1.5" PointX="5.25" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.AnswerReport" Width="1.5" PointX="7.5" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.Question" Width="1.5" PointX="3" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.QuestionReport" Width="1.5" PointX="8.25" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.QuestionTag" Width="1.5" PointX="5.25" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.Tag" Width="1.5" PointX="3" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.User" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AskMeModel.Vote" Width="1.5" PointX="10.5" PointY="7.125" IsExpanded="true" />
+        <AssociationConnector Association="AskMeModel.fk_answer_creator_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_answer_question_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_answer_report_answer_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_vote_answer_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_answer_report_report_handler_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_answer_report_reporter_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_question_creator_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_question_report_question_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_question_tag_question_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_question_report_report_handler_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_question_report_reporter_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_question_tag_tag_id" ManuallyRouted="false" />
+        <AssociationConnector Association="AskMeModel.fk_vote_user_id" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

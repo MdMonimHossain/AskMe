@@ -1,0 +1,26 @@
+﻿@foreach (var questionCard in ViewBag.QuestionCards)
+{
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="card-title" style="font-size: 18px"><a class="link-dark" style="text-decoration: none;" href="/Home/UserProfile?ID=@questionCard.CreatorID">@questionCard.UserName</a></h4>
+                </div>
+                <div class="col-6">
+                    @if (ViewBag.SessionUser.ID != questionCard.CreatorID) { ViewBag.hideEdit = "display: none"; } else { ViewBag.hideEdit = ""; }
+                    <div class="p text-end p-1" style="@ViewBag.hideEdit">
+                        <a href="/Question/EditQuestion?ID=@questionCard.ID" class="card-link" style="text-decoration: none;">Edit</a>
+                        &nbsp;
+                        <a class="link-danger" style="cursor: pointer; text-decoration: none;" onclick="deleteAlert(@questionCard.ID)">Delete</a>
+                    </div>
+                </div>
+            </div>
+            <h6 class="card-subtitle mb-2 text-muted" style="font-size: 12px">@questionCard.Datetime</h6>
+            <h6 class="card-subtitle mb-2 text-muted" style="font-size: 12px">@questionCard.ViewCount Views</h6>
+            <p class="card-text fw-bold" style="font-size: 20px">@questionCard.QuestionTitle</p>
+            <a href="/Question/ViewQuestion?ID=@questionCard.ID&increaseViews=true" class="link-secondary" style="font-size: 15px">See more</a>
+            <h6 class="card-text my-2" style="font-size: 12px">@questionCard.AnswerCount Answers</h6>
+        </div>
+    </div>
+    <br>
+}

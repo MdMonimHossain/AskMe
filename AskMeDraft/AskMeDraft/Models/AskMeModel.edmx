@@ -1,0 +1,809 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AskMeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Answer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="text" Nullable="false" />
+          <Property Name="CreatorID" Type="int" Nullable="false" />
+          <Property Name="QuestionID" Type="int" Nullable="false" />
+          <Property Name="PostingDatetime" Type="datetime" Nullable="false" />
+          <Property Name="ModificationDatetime" Type="datetime" Nullable="false" />
+          <Property Name="UpvoteCount" Type="int" Nullable="false" />
+          <Property Name="DownvoteCount" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AnswerReport">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AnswerID" Type="int" Nullable="false" />
+          <Property Name="ReporterID" Type="int" Nullable="false" />
+          <Property Name="ReportHandlerID" Type="int" />
+          <Property Name="Reason" Type="varchar" MaxLength="500" />
+          <Property Name="ReportDatetime" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Description" Type="text" />
+          <Property Name="CreatorID" Type="int" Nullable="false" />
+          <Property Name="PostingDatetime" Type="datetime" Nullable="false" />
+          <Property Name="ModificationDatetime" Type="datetime" Nullable="false" />
+          <Property Name="ViewCount" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="QuestionReport">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuestionID" Type="int" Nullable="false" />
+          <Property Name="ReporterID" Type="int" Nullable="false" />
+          <Property Name="ReportHandlerID" Type="int" />
+          <Property Name="Reason" Type="varchar" MaxLength="500" />
+          <Property Name="ReportDatetime" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="QuestionTag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuestionID" Type="int" Nullable="false" />
+          <Property Name="TagID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Keyword" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="JoiningDatetime" Type="datetime" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Role" Type="nvarchar" MaxLength="20" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="QuestionCount" Type="int" Nullable="false" />
+          <Property Name="AnswerCount" Type="int" Nullable="false" />
+          <Property Name="ReportCount" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Vote">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AnswerID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_answer_creator_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Answer" Type="Self.Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Answer">
+              <PropertyRef Name="CreatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_question_id">
+          <End Role="Question" Type="Self.Question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Answer" Type="Self.Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Answer">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_report_answer_id">
+          <End Role="Answer" Type="Self.Answer" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AnswerReport" Type="Self.AnswerReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Answer">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AnswerReport">
+              <PropertyRef Name="AnswerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_report_report_handler_id">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="AnswerReport" Type="Self.AnswerReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AnswerReport">
+              <PropertyRef Name="ReportHandlerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_report_reporter_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="AnswerReport" Type="Self.AnswerReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AnswerReport">
+              <PropertyRef Name="ReporterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_creator_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Question" Type="Self.Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="CreatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_report_question_id">
+          <End Role="Question" Type="Self.Question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QuestionReport" Type="Self.QuestionReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionReport">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_report_report_handler_id">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="QuestionReport" Type="Self.QuestionReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionReport">
+              <PropertyRef Name="ReportHandlerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_report_reporter_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="QuestionReport" Type="Self.QuestionReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionReport">
+              <PropertyRef Name="ReporterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_tag_question_id">
+          <End Role="Question" Type="Self.Question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QuestionTag" Type="Self.QuestionTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionTag">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_tag_tag_id">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QuestionTag" Type="Self.QuestionTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionTag">
+              <PropertyRef Name="TagID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_vote_answer_id">
+          <End Role="Answer" Type="Self.Answer" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Vote" Type="Self.Vote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Answer">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Vote">
+              <PropertyRef Name="AnswerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_vote_user_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Vote" Type="Self.Vote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Vote">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AskMeModelStoreContainer">
+          <EntitySet Name="Answer" EntityType="Self.Answer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AnswerReport" EntityType="Self.AnswerReport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuestionReport" EntityType="Self.QuestionReport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuestionTag" EntityType="Self.QuestionTag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vote" EntityType="Self.Vote" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="fk_answer_creator_id" Association="Self.fk_answer_creator_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="Answer" EntitySet="Answer" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_question_id" Association="Self.fk_answer_question_id">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="Answer" EntitySet="Answer" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_report_answer_id" Association="Self.fk_answer_report_answer_id">
+            <End Role="Answer" EntitySet="Answer" />
+            <End Role="AnswerReport" EntitySet="AnswerReport" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_report_report_handler_id" Association="Self.fk_answer_report_report_handler_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="AnswerReport" EntitySet="AnswerReport" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_report_reporter_id" Association="Self.fk_answer_report_reporter_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="AnswerReport" EntitySet="AnswerReport" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_creator_id" Association="Self.fk_question_creator_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_report_question_id" Association="Self.fk_question_report_question_id">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="QuestionReport" EntitySet="QuestionReport" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_report_report_handler_id" Association="Self.fk_question_report_report_handler_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="QuestionReport" EntitySet="QuestionReport" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_report_reporter_id" Association="Self.fk_question_report_reporter_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="QuestionReport" EntitySet="QuestionReport" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_tag_question_id" Association="Self.fk_question_tag_question_id">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="QuestionTag" EntitySet="QuestionTag" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_tag_tag_id" Association="Self.fk_question_tag_tag_id">
+            <End Role="Tag" EntitySet="Tag" />
+            <End Role="QuestionTag" EntitySet="QuestionTag" />
+          </AssociationSet>
+          <AssociationSet Name="fk_vote_answer_id" Association="Self.fk_vote_answer_id">
+            <End Role="Answer" EntitySet="Answer" />
+            <End Role="Vote" EntitySet="Vote" />
+          </AssociationSet>
+          <AssociationSet Name="fk_vote_user_id" Association="Self.fk_vote_user_id">
+            <End Role="User" EntitySet="User" />
+            <End Role="Vote" EntitySet="Vote" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AskMeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Answer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CreatorID" Type="Int32" Nullable="false" />
+          <Property Name="QuestionID" Type="Int32" Nullable="false" />
+          <Property Name="PostingDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModificationDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpvoteCount" Type="Int32" Nullable="false" />
+          <Property Name="DownvoteCount" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Self.fk_answer_creator_id" FromRole="Answer" ToRole="User" />
+          <NavigationProperty Name="Question" Relationship="Self.fk_answer_question_id" FromRole="Answer" ToRole="Question" />
+          <NavigationProperty Name="AnswerReports" Relationship="Self.fk_answer_report_answer_id" FromRole="Answer" ToRole="AnswerReport" />
+          <NavigationProperty Name="Votes" Relationship="Self.fk_vote_answer_id" FromRole="Answer" ToRole="Vote" />
+        </EntityType>
+        <EntityType Name="AnswerReport">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AnswerID" Type="Int32" Nullable="false" />
+          <Property Name="ReporterID" Type="Int32" Nullable="false" />
+          <Property Name="ReportHandlerID" Type="Int32" />
+          <Property Name="Reason" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ReportDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Answer" Relationship="Self.fk_answer_report_answer_id" FromRole="AnswerReport" ToRole="Answer" />
+          <NavigationProperty Name="User" Relationship="Self.fk_answer_report_report_handler_id" FromRole="AnswerReport" ToRole="User" />
+          <NavigationProperty Name="User1" Relationship="Self.fk_answer_report_reporter_id" FromRole="AnswerReport" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CreatorID" Type="Int32" Nullable="false" />
+          <Property Name="PostingDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModificationDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ViewCount" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Answers" Relationship="Self.fk_answer_question_id" FromRole="Question" ToRole="Answer" />
+          <NavigationProperty Name="User" Relationship="Self.fk_question_creator_id" FromRole="Question" ToRole="User" />
+          <NavigationProperty Name="QuestionReports" Relationship="Self.fk_question_report_question_id" FromRole="Question" ToRole="QuestionReport" />
+          <NavigationProperty Name="QuestionTags" Relationship="Self.fk_question_tag_question_id" FromRole="Question" ToRole="QuestionTag" />
+        </EntityType>
+        <EntityType Name="QuestionReport">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuestionID" Type="Int32" Nullable="false" />
+          <Property Name="ReporterID" Type="Int32" Nullable="false" />
+          <Property Name="ReportHandlerID" Type="Int32" />
+          <Property Name="Reason" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ReportDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Question" Relationship="Self.fk_question_report_question_id" FromRole="QuestionReport" ToRole="Question" />
+          <NavigationProperty Name="User" Relationship="Self.fk_question_report_report_handler_id" FromRole="QuestionReport" ToRole="User" />
+          <NavigationProperty Name="User1" Relationship="Self.fk_question_report_reporter_id" FromRole="QuestionReport" ToRole="User" />
+        </EntityType>
+        <EntityType Name="QuestionTag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuestionID" Type="Int32" Nullable="false" />
+          <Property Name="TagID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Question" Relationship="Self.fk_question_tag_question_id" FromRole="QuestionTag" ToRole="Question" />
+          <NavigationProperty Name="Tag" Relationship="Self.fk_question_tag_tag_id" FromRole="QuestionTag" ToRole="Tag" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="QuestionTags" Relationship="Self.fk_question_tag_tag_id" FromRole="Tag" ToRole="QuestionTag" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="JoiningDatetime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Username" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Role" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="QuestionCount" Type="Int32" Nullable="false" />
+          <Property Name="AnswerCount" Type="Int32" Nullable="false" />
+          <Property Name="ReportCount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Answers" Relationship="Self.fk_answer_creator_id" FromRole="User" ToRole="Answer" />
+          <NavigationProperty Name="AnswerReports" Relationship="Self.fk_answer_report_report_handler_id" FromRole="User" ToRole="AnswerReport" />
+          <NavigationProperty Name="AnswerReports1" Relationship="Self.fk_answer_report_reporter_id" FromRole="User" ToRole="AnswerReport" />
+          <NavigationProperty Name="Questions" Relationship="Self.fk_question_creator_id" FromRole="User" ToRole="Question" />
+          <NavigationProperty Name="QuestionReports" Relationship="Self.fk_question_report_report_handler_id" FromRole="User" ToRole="QuestionReport" />
+          <NavigationProperty Name="QuestionReports1" Relationship="Self.fk_question_report_reporter_id" FromRole="User" ToRole="QuestionReport" />
+          <NavigationProperty Name="Votes" Relationship="Self.fk_vote_user_id" FromRole="User" ToRole="Vote" />
+        </EntityType>
+        <EntityType Name="Vote">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AnswerID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Answer" Relationship="Self.fk_vote_answer_id" FromRole="Vote" ToRole="Answer" />
+          <NavigationProperty Name="User" Relationship="Self.fk_vote_user_id" FromRole="Vote" ToRole="User" />
+        </EntityType>
+        <Association Name="fk_answer_creator_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Answer" Type="Self.Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Answer">
+              <PropertyRef Name="CreatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_question_id">
+          <End Role="Question" Type="Self.Question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Answer" Type="Self.Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Answer">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_report_answer_id">
+          <End Role="Answer" Type="Self.Answer" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AnswerReport" Type="Self.AnswerReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Answer">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AnswerReport">
+              <PropertyRef Name="AnswerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_vote_answer_id">
+          <End Role="Answer" Type="Self.Answer" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Vote" Type="Self.Vote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Answer">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Vote">
+              <PropertyRef Name="AnswerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_report_report_handler_id">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="AnswerReport" Type="Self.AnswerReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AnswerReport">
+              <PropertyRef Name="ReportHandlerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_answer_report_reporter_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="AnswerReport" Type="Self.AnswerReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AnswerReport">
+              <PropertyRef Name="ReporterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_creator_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Question" Type="Self.Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="CreatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_report_question_id">
+          <End Role="Question" Type="Self.Question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QuestionReport" Type="Self.QuestionReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionReport">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_tag_question_id">
+          <End Role="Question" Type="Self.Question" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QuestionTag" Type="Self.QuestionTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionTag">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_report_report_handler_id">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="QuestionReport" Type="Self.QuestionReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionReport">
+              <PropertyRef Name="ReportHandlerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_report_reporter_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="QuestionReport" Type="Self.QuestionReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionReport">
+              <PropertyRef Name="ReporterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_question_tag_tag_id">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QuestionTag" Type="Self.QuestionTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QuestionTag">
+              <PropertyRef Name="TagID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_vote_user_id">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Vote" Type="Self.Vote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Vote">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AskMeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Answers" EntityType="Self.Answer" />
+          <EntitySet Name="AnswerReports" EntityType="Self.AnswerReport" />
+          <EntitySet Name="Questions" EntityType="Self.Question" />
+          <EntitySet Name="QuestionReports" EntityType="Self.QuestionReport" />
+          <EntitySet Name="QuestionTags" EntityType="Self.QuestionTag" />
+          <EntitySet Name="Tags" EntityType="Self.Tag" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="Votes" EntityType="Self.Vote" />
+          <AssociationSet Name="fk_answer_creator_id" Association="Self.fk_answer_creator_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Answer" EntitySet="Answers" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_question_id" Association="Self.fk_answer_question_id">
+            <End Role="Question" EntitySet="Questions" />
+            <End Role="Answer" EntitySet="Answers" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_report_answer_id" Association="Self.fk_answer_report_answer_id">
+            <End Role="Answer" EntitySet="Answers" />
+            <End Role="AnswerReport" EntitySet="AnswerReports" />
+          </AssociationSet>
+          <AssociationSet Name="fk_vote_answer_id" Association="Self.fk_vote_answer_id">
+            <End Role="Answer" EntitySet="Answers" />
+            <End Role="Vote" EntitySet="Votes" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_report_report_handler_id" Association="Self.fk_answer_report_report_handler_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="AnswerReport" EntitySet="AnswerReports" />
+          </AssociationSet>
+          <AssociationSet Name="fk_answer_report_reporter_id" Association="Self.fk_answer_report_reporter_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="AnswerReport" EntitySet="AnswerReports" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_creator_id" Association="Self.fk_question_creator_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Question" EntitySet="Questions" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_report_question_id" Association="Self.fk_question_report_question_id">
+            <End Role="Question" EntitySet="Questions" />
+            <End Role="QuestionReport" EntitySet="QuestionReports" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_tag_question_id" Association="Self.fk_question_tag_question_id">
+            <End Role="Question" EntitySet="Questions" />
+            <End Role="QuestionTag" EntitySet="QuestionTags" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_report_report_handler_id" Association="Self.fk_question_report_report_handler_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="QuestionReport" EntitySet="QuestionReports" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_report_reporter_id" Association="Self.fk_question_report_reporter_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="QuestionReport" EntitySet="QuestionReports" />
+          </AssociationSet>
+          <AssociationSet Name="fk_question_tag_tag_id" Association="Self.fk_question_tag_tag_id">
+            <End Role="Tag" EntitySet="Tags" />
+            <End Role="QuestionTag" EntitySet="QuestionTags" />
+          </AssociationSet>
+          <AssociationSet Name="fk_vote_user_id" Association="Self.fk_vote_user_id">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Vote" EntitySet="Votes" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AskMeModelStoreContainer" CdmEntityContainer="AskMeEntities">
+          <EntitySetMapping Name="Answers">
+            <EntityTypeMapping TypeName="AskMeModel.Answer">
+              <MappingFragment StoreEntitySet="Answer">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="CreatorID" ColumnName="CreatorID" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="PostingDatetime" ColumnName="PostingDatetime" />
+                <ScalarProperty Name="ModificationDatetime" ColumnName="ModificationDatetime" />
+                <ScalarProperty Name="UpvoteCount" ColumnName="UpvoteCount" />
+                <ScalarProperty Name="DownvoteCount" ColumnName="DownvoteCount" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AnswerReports">
+            <EntityTypeMapping TypeName="AskMeModel.AnswerReport">
+              <MappingFragment StoreEntitySet="AnswerReport">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AnswerID" ColumnName="AnswerID" />
+                <ScalarProperty Name="ReporterID" ColumnName="ReporterID" />
+                <ScalarProperty Name="ReportHandlerID" ColumnName="ReportHandlerID" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="ReportDatetime" ColumnName="ReportDatetime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Questions">
+            <EntityTypeMapping TypeName="AskMeModel.Question">
+              <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CreatorID" ColumnName="CreatorID" />
+                <ScalarProperty Name="PostingDatetime" ColumnName="PostingDatetime" />
+                <ScalarProperty Name="ModificationDatetime" ColumnName="ModificationDatetime" />
+                <ScalarProperty Name="ViewCount" ColumnName="ViewCount" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuestionReports">
+            <EntityTypeMapping TypeName="AskMeModel.QuestionReport">
+              <MappingFragment StoreEntitySet="QuestionReport">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="ReporterID" ColumnName="ReporterID" />
+                <ScalarProperty Name="ReportHandlerID" ColumnName="ReportHandlerID" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="ReportDatetime" ColumnName="ReportDatetime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuestionTags">
+            <EntityTypeMapping TypeName="AskMeModel.QuestionTag">
+              <MappingFragment StoreEntitySet="QuestionTag">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="TagID" ColumnName="TagID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tags">
+            <EntityTypeMapping TypeName="AskMeModel.Tag">
+              <MappingFragment StoreEntitySet="Tag">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="AskMeModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="JoiningDatetime" ColumnName="JoiningDatetime" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="QuestionCount" ColumnName="QuestionCount" />
+                <ScalarProperty Name="AnswerCount" ColumnName="AnswerCount" />
+                <ScalarProperty Name="ReportCount" ColumnName="ReportCount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Votes">
+            <EntityTypeMapping TypeName="AskMeModel.Vote">
+              <MappingFragment StoreEntitySet="Vote">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AnswerID" ColumnName="AnswerID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
